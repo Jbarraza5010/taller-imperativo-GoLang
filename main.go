@@ -246,10 +246,86 @@ func testFindPair() {
 	fmt.Println()
 }
 
+// Ejercicio 6: 3Sum
+//
+// Se desarrolla la función threeSum, que imprime todas las ternas únicas de
+// posiciones distintas cuya suma es cero y devuelve cuántas encontró. Si la
+// entrada tiene menos de tres elementos devuelve cero. Para conservar la
+// entrada se crea una copia con copyArray y se ordena con sortAscending. Luego
+// se fija cada elemento sorted[i] como primer valor de la terna y se buscan
+// los otros dos con la técnica de dos índices del ejercicio 5, con left
+// después de i y right al final, buscando que sumen -sorted[i]. Al encontrar
+// una terna no se detiene la búsqueda, porque con el mismo primer elemento
+// puede haber otras ternas, así que mueve ambos índices y sigue. Las ternas
+// duplicadas se evitan gracias al orden, ya que los valores iguales quedan
+// juntos. Si sorted[i] es igual al anterior se salta, porque ese primer valor
+// ya se procesó, y después de cada terna encontrada se saltan los valores
+// repetidos en left y en right. El ciclo externo recorre n elementos y la
+// búsqueda interna es O(n), así que la búsqueda posterior al ordenamiento es
+// O(n²).
+
+// threeSum imprime las ternas únicas que suman cero y devuelve su cantidad.
+func threeSum(values []int) int {
+	if len(values) < 3 {
+		return 0
+	}
+	sorted := copyArray(values)
+	sortAscending(sorted)
+	count := 0
+	for i := 0; i < len(sorted)-2; i++ {
+		if i > 0 && sorted[i] == sorted[i-1] {
+			continue
+		}
+		left := i + 1
+		right := len(sorted) - 1
+		for left < right {
+			sum := sorted[i] + sorted[left] + sorted[right]
+			if sum == 0 {
+				fmt.Printf("(%d, %d, %d)\n", sorted[i], sorted[left], sorted[right])
+				count++
+				left++
+				right--
+				for left < right && sorted[left] == sorted[left-1] {
+					left++
+				}
+				for left < right && sorted[right] == sorted[right+1] {
+					right--
+				}
+			} else if sum < 0 {
+				left++
+			} else {
+				right--
+			}
+		}
+	}
+	return count
+}
+
+// runThreeSumTest ejecuta un caso de threeSum y muestra el resultado esperado.
+func runThreeSumTest(values []int, expected string) {
+	fmt.Println("Entrada:", values)
+	count := threeSum(values)
+	fmt.Println("Cantidad de ternas:", count)
+	fmt.Println("Entrada después de la búsqueda:", values)
+	fmt.Println("Esperado:", expected)
+}
+
+// testThreeSum ejecuta los cinco casos de prueba de 3Sum.
+func testThreeSum() {
+	fmt.Println("Ejercicio 6: 3Sum")
+	runThreeSumTest([]int{-1, 0, 1, 2, -1, -4}, "(-1, -1, 2) y (-1, 0, 1)")
+	runThreeSumTest([]int{0, 1, 1}, "Ninguna")
+	runThreeSumTest([]int{0, 0, 0}, "(0, 0, 0)")
+	runThreeSumTest([]int{0, 0, 0, 0}, "Una única terna (0, 0, 0)")
+	runThreeSumTest([]int{-2, 0, 0, 2, 2}, "Una única terna (-2, 0, 2)")
+	fmt.Println()
+}
+
 func main() {
 	testSwap()
 	testStatistics()
 	testCopy()
 	testSort()
 	testFindPair()
+	testThreeSum()
 }
