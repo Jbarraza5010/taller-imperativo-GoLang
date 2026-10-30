@@ -193,9 +193,63 @@ func testSort() {
 	fmt.Println()
 }
 
+// Ejercicio 5: Dos valores que suman un objetivo
+//
+// Se desarrolla la función findPair, que busca en un slice ordenado de forma
+// ascendente dos posiciones distintas cuyos valores sumen el objetivo. Usa
+// dos índices, left en el inicio y right en el final, y en cada paso compara
+// la suma de ambos con el objetivo. Si la suma es menor, se puede descartar
+// el extremo izquierdo, porque al sumarlo con el mayor valor disponible ya no
+// alcanza el objetivo y con cualquier otro valor la suma sería aún menor, así
+// que left avanza. Si la suma es mayor, se descarta el extremo derecho por la
+// razón contraria, porque ni con el menor valor disponible baja lo suficiente,
+// así que right retrocede. El ciclo termina cuando encuentra el par o cuando
+// los índices se cruzan, lo que da un recorrido O(n). La entrada no se
+// modifica, solo se leen sus elementos, y si tiene menos de dos elementos el
+// ciclo no se ejecuta y la función devuelve false.
+
+// findPair imprime un par de values que suma target y devuelve si existe.
+func findPair(values []int, target int) bool {
+	left := 0
+	right := len(values) - 1
+	for left < right {
+		sum := values[left] + values[right]
+		if sum == target {
+			fmt.Printf("Par encontrado: (%d, %d)\n", values[left], values[right])
+			return true
+		} else if sum < target {
+			left++
+		} else {
+			right--
+		}
+	}
+	return false
+}
+
+// runPairTest ejecuta un caso de findPair y muestra el resultado esperado.
+func runPairTest(values []int, target int, expected string) {
+	fmt.Println("Arreglo:", values, "Objetivo:", target)
+	found := findPair(values, target)
+	if !found {
+		fmt.Println("No existe un par")
+	}
+	fmt.Println("Esperado:", expected)
+}
+
+// testFindPair ejecuta las cuatro pruebas de búsqueda de pares.
+func testFindPair() {
+	fmt.Println("Ejercicio 5: Dos valores que suman un objetivo")
+	runPairTest([]int{-4, -1, 0, 2, 5}, 1, "(-4, 5)")
+	runPairTest([]int{-4, -1, 0, 2, 5}, 8, "No existe")
+	runPairTest([]int{0, 0}, 0, "(0, 0)")
+	runPairTest([]int{3}, 6, "No existe")
+	fmt.Println()
+}
+
 func main() {
 	testSwap()
 	testStatistics()
 	testCopy()
 	testSort()
+	testFindPair()
 }
