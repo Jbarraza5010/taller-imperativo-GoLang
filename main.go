@@ -321,6 +321,61 @@ func testThreeSum() {
 	fmt.Println()
 }
 
+// Ejercicio 7: Máximos desde ambos extremos
+//
+// Se desarrollan las funciones buildLeftMax y buildRightMax, que calculan
+// para cada posición la mayor altura vista desde cada extremo, incluyendo la
+// altura actual. Los slices de salida se crean antes con make, con la misma
+// longitud que height, y se pasan como parámetros. Las funciones no necesitan
+// devolverlos porque escriben en los elementos del arreglo subyacente que
+// comparten con el llamador. buildLeftMax recorre de izquierda a derecha, y
+// cada posición guarda el mayor entre la altura actual y el máximo de la
+// posición anterior. buildRightMax hace lo mismo de derecha a izquierda,
+// comparando con el máximo de la posición siguiente. Cada función hace un
+// único recorrido, así que ambas son O(n). La entrada no se modifica y no
+// puede estar vacía, porque cada recorrido empieza copiando la altura del
+// extremo.
+
+// buildLeftMax llena leftMax con el máximo de height desde el inicio.
+func buildLeftMax(height []int, leftMax []int) {
+	leftMax[0] = height[0]
+	for i := 1; i < len(height); i++ {
+		if height[i] > leftMax[i-1] {
+			leftMax[i] = height[i]
+		} else {
+			leftMax[i] = leftMax[i-1]
+		}
+	}
+}
+
+// buildRightMax llena rightMax con el máximo de height desde el final.
+func buildRightMax(height []int, rightMax []int) {
+	last := len(height) - 1
+	rightMax[last] = height[last]
+	for i := last - 1; i >= 0; i-- {
+		if height[i] > rightMax[i+1] {
+			rightMax[i] = height[i]
+		} else {
+			rightMax[i] = rightMax[i+1]
+		}
+	}
+}
+
+// testMaxArrays ejecuta el caso de prueba del ejercicio 7.
+func testMaxArrays() {
+	fmt.Println("Ejercicio 7: Máximos desde ambos extremos")
+	height := []int{3, 0, 2, 0, 4}
+	leftMax := make([]int, len(height))
+	rightMax := make([]int, len(height))
+	buildLeftMax(height, leftMax)
+	buildRightMax(height, rightMax)
+	fmt.Println("height:  ", height)
+	fmt.Println("leftMax: ", leftMax)
+	fmt.Println("rightMax:", rightMax)
+	fmt.Println("Esperado: leftMax [3 3 3 3 4], rightMax [4 4 4 4 4]")
+	fmt.Println()
+}
+
 func main() {
 	testSwap()
 	testStatistics()
@@ -328,4 +383,5 @@ func main() {
 	testSort()
 	testFindPair()
 	testThreeSum()
+	testMaxArrays()
 }
