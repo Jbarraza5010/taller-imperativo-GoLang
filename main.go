@@ -343,8 +343,8 @@ func testMaxArrays() {
 // leftMax y rightMax del ejercicio 7. El agua de cada posición depende del
 // menor de los dos máximos porque, si subiera más, se derramaría por el lado
 // más bajo. Esa altura menos la columna actual da el agua de la posición. El
-// total se acumula en int64 porque puede pasar el límite de 32 bits. Usa
-// tiempo O(n), espacio auxiliar O(n) y no modifica la entrada.
+// total se acumula en int64 porque el peor caso queda cerca del límite de 32
+// bits. Usa tiempo O(n), espacio auxiliar O(n) y no modifica la entrada.
 
 // waterAt devuelve el agua sobre la posición i a partir de los dos máximos.
 func waterAt(height []int, leftMax []int, rightMax []int, i int) int {
