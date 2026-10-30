@@ -156,8 +156,46 @@ func testCopy() {
 	fmt.Println()
 }
 
+// Ejercicio 4: Ordenar una copia
+//
+// Se desarrolla la función sortAscending, que ordena un slice de menor a
+// mayor usando el algoritmo de inserción, sin usar sort ni slices.Sort. El
+// algoritmo recorre el slice desde la segunda posición, guarda el elemento
+// actual en una variable local y desplaza hacia la derecha los elementos
+// anteriores que sean mayores, hasta encontrar el lugar donde insertarlo. La
+// función no devuelve nada porque el descriptor del slice se pasa por valor,
+// pero sus elementos pertenecen al arreglo subyacente compartido, así que los
+// cambios se ven en el slice del llamador. Por eso se ordena una copia hecha
+// con copyArray del ejercicio 3, para conservar la entrada original.
+
+// sortAscending ordena values de menor a mayor mediante inserción.
+func sortAscending(values []int) {
+	for i := 1; i < len(values); i++ {
+		current := values[i]
+		j := i - 1
+		for j >= 0 && values[j] > current {
+			values[j+1] = values[j]
+			j--
+		}
+		values[j+1] = current
+	}
+}
+
+// testSort ejecuta el caso de prueba del ejercicio 4.
+func testSort() {
+	fmt.Println("Ejercicio 4: Ordenar una copia")
+	original := []int{4, -2, 0, 7, -5}
+	sorted := copyArray(original)
+	sortAscending(sorted)
+	fmt.Println("Original:", original)
+	fmt.Println("Ordenado:", sorted)
+	fmt.Println("Esperado: Ordenado [-5 -2 0 4 7]")
+	fmt.Println()
+}
+
 func main() {
 	testSwap()
 	testStatistics()
 	testCopy()
+	testSort()
 }
