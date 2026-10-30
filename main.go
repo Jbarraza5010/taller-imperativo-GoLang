@@ -114,7 +114,50 @@ func testStatistics() {
 	fmt.Println()
 }
 
+// Ejercicio 3: Copia independiente
+//
+// Se desarrolla la función copyArray, que crea un slice nuevo con make del
+// mismo tamaño que la entrada y copia cada elemento mediante un ciclo, sin
+// usar la función copy. Como make reserva un arreglo subyacente nuevo, la
+// copia y el original quedan en memorias distintas y modificar uno no afecta
+// al otro. En cambio, other := original no copia los elementos. Un slice
+// guarda una referencia a su arreglo subyacente junto con su longitud y su
+// capacidad, así que esa asignación solo copia la referencia y ambos slices
+// terminan apuntando a los mismos datos. Por eso un cambio hecho con other
+// también se ve en original. En Go no se llama a free, porque el recolector
+// de basura recupera la memoria cuando el slice deja de ser alcanzable.
+
+// copyArray devuelve un slice nuevo con los mismos elementos de values.
+func copyArray(values []int) []int {
+	result := make([]int, len(values))
+	for i := 0; i < len(values); i++ {
+		result[i] = values[i]
+	}
+	return result
+}
+
+// testCopy ejecuta el caso de prueba del ejercicio 3.
+func testCopy() {
+	fmt.Println("Ejercicio 3: Copia independiente")
+	original := []int{4, -2, 0, 7, -5}
+	independent := copyArray(original)
+	independent[0] = 99
+	fmt.Println("Original:", original)
+	fmt.Println("Copia:   ", independent)
+	fmt.Println("Esperado: Original [4 -2 0 7 -5], Copia [99 -2 0 7 -5]")
+
+	fmt.Println("Comparación con other := original")
+	shared := []int{4, -2, 0, 7, -5}
+	other := shared
+	other[0] = 99
+	fmt.Println("Original:", shared)
+	fmt.Println("Other:   ", other)
+	fmt.Println("El original también cambia porque ambos comparten los datos")
+	fmt.Println()
+}
+
 func main() {
 	testSwap()
 	testStatistics()
+	testCopy()
 }
