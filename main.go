@@ -376,6 +376,93 @@ func testMaxArrays() {
 	fmt.Println()
 }
 
+// Ejercicio 8: Trapping Rain Water
+//
+// Se desarrolla la función trappedWater, que calcula cuánta agua queda
+// atrapada entre columnas de ancho uno. Crea leftMax y rightMax con make y
+// los llena con buildLeftMax y buildRightMax del ejercicio 7. En cada
+// posición, el agua depende del menor de los dos máximos porque el agua sube
+// hasta que se derrama por el lado más bajo. La pared más alta de la
+// izquierda y la más alta de la derecha forman un recipiente, y si el nivel
+// pasara la menor de las dos, el agua se escaparía por ese lado hacia el
+// extremo. Por eso el nivel en la posición es el menor de leftMax y rightMax,
+// y el agua sobre la columna es ese nivel menos la altura actual. Como ambos
+// máximos incluyen la altura actual, la resta nunca es negativa. El total se
+// acumula en int64 porque con hasta 20 000 columnas y alturas de hasta
+// 100 000 el resultado puede pasar el límite de un entero de 32 bits. La
+// entrada no se modifica, el tiempo es O(n) porque hay tres recorridos
+// separados y el espacio auxiliar es O(n) por los dos slices de máximos. La
+// función printWaterDetail usa el mismo cálculo para mostrar el detalle por
+// posición.
+
+// waterAt devuelve el agua sobre la posición i a partir de los dos máximos.
+func waterAt(height []int, leftMax []int, rightMax []int, i int) int {
+	level := leftMax[i]
+	if rightMax[i] < level {
+		level = rightMax[i]
+	}
+	return level - height[i]
+}
+
+// trappedWater devuelve el total de agua atrapada sobre height.
+func trappedWater(height []int) int64 {
+	leftMax := make([]int, len(height))
+	rightMax := make([]int, len(height))
+	buildLeftMax(height, leftMax)
+	buildRightMax(height, rightMax)
+	total := int64(0)
+	for i := 0; i < len(height); i++ {
+		amount := waterAt(height, leftMax, rightMax, i)
+		total += int64(amount)
+	}
+	return total
+}
+
+// printWaterDetail imprime el cálculo de agua para cada posición de height.
+func printWaterDetail(height []int) {
+	leftMax := make([]int, len(height))
+	rightMax := make([]int, len(height))
+	buildLeftMax(height, leftMax)
+	buildRightMax(height, rightMax)
+	for i := 0; i < len(height); i++ {
+		amount := waterAt(height, leftMax, rightMax, i)
+		fmt.Printf("Posición %d: altura %d, leftMax %d, rightMax %d, agua %d\n",
+			i, height[i], leftMax[i], rightMax[i], amount)
+	}
+}
+
+// runWaterTest ejecuta un caso de trappedWater y muestra el resultado esperado.
+func runWaterTest(height []int, expected int64) {
+	total := trappedWater(height)
+	fmt.Println("Alturas:", height, "Agua total:", total, "Esperado:", expected)
+}
+
+// testTrappedWater ejecuta los ocho casos de agua atrapada y un caso propio.
+func testTrappedWater() {
+	fmt.Println("Ejercicio 8: Trapping Rain Water")
+	runWaterTest([]int{5}, 0)
+	runWaterTest([]int{0, 1, 2, 3}, 0)
+	runWaterTest([]int{3, 2, 1, 0}, 0)
+	runWaterTest([]int{2, 2, 2}, 0)
+	runWaterTest([]int{3, 0, 3}, 3)
+	runWaterTest([]int{3, 0, 2, 0, 4}, 7)
+	runWaterTest([]int{4, 2, 0, 3, 2, 5}, 9)
+	runWaterTest([]int{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1}, 6)
+
+	fmt.Println("Detalle por posición para [3, 0, 2, 0, 4]")
+	detail := []int{3, 0, 2, 0, 4}
+	printWaterDetail(detail)
+	fmt.Println("Entrada después del cálculo:", detail)
+
+	// Caso propio: la pared izquierda mide 5 pero la derecha solo 2, así que
+	// el agua en las posiciones 1 y 2 sube hasta 2 y no hasta 5. Cada una
+	// guarda 2 unidades y el total esperado es 4.
+	fmt.Println("Caso propio")
+	runWaterTest([]int{5, 0, 0, 2}, 4)
+	printWaterDetail([]int{5, 0, 0, 2})
+	fmt.Println()
+}
+
 func main() {
 	testSwap()
 	testStatistics()
@@ -384,4 +471,5 @@ func main() {
 	testFindPair()
 	testThreeSum()
 	testMaxArrays()
+	testTrappedWater()
 }
