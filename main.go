@@ -4,15 +4,10 @@ import "fmt"
 
 // Ejercicio 1: Intercambio de valores
 //
-// Se desarrolla la función swap, que intercambia los valores de dos
-// variables. Recibe punteros porque Go pasa los argumentos por valor, así
-// que si recibiera int trabajaría con copias y el cambio no se vería en main.
-// Con punteros recibe las direcciones de las variables originales y puede
-// modificarlas. Modificar a cambia solo la dirección guardada en el puntero
-// local, mientras que modificar *a cambia el valor que está en esa dirección,
-// que es la variable original de main. La variable auxiliar temp es local,
-// por lo que solo existe dentro de swap y deja de ser accesible cuando la
-// función termina.
+// La función swap intercambia dos valores. Recibe punteros porque Go pasa
+// copias de los argumentos, y así puede modificar las variables originales.
+// Cambiar a solo cambia el puntero local, mientras que cambiar *a modifica la
+// variable de main. La variable temp es local y solo existe dentro de swap.
 
 // swap intercambia los valores a los que apuntan a y b.
 func swap(a *int, b *int) {
@@ -35,14 +30,10 @@ func testSwap() {
 
 // Ejercicio 2: Estadísticas de un arreglo
 //
-// Se desarrollan funciones que recorren un slice de enteros para calcular
-// la suma, el mínimo, el máximo y la cantidad de números negativos, además
-// de una función que imprime los elementos en orden inverso. Cada función
-// recibe el slice como parámetro y usa variables locales para acumular su
-// resultado, sin usar variables globales. El mínimo y el máximo empiezan con
-// el primer elemento, por eso la entrada no puede estar vacía. El recorrido
-// inverso solo avanza los índices del último al primero, así que la entrada
-// no se modifica para imprimirla al revés.
+// Funciones que recorren un slice para calcular la suma, el mínimo, el
+// máximo y los negativos, y otra que lo imprime al revés. Cada una recibe el
+// slice como parámetro y usa variables locales. El recorrido inverso solo
+// mueve los índices, así que la entrada no se modifica.
 
 // sumArray devuelve la suma de todos los elementos de values.
 func sumArray(values []int) int {
@@ -116,16 +107,11 @@ func testStatistics() {
 
 // Ejercicio 3: Copia independiente
 //
-// Se desarrolla la función copyArray, que crea un slice nuevo con make del
-// mismo tamaño que la entrada y copia cada elemento mediante un ciclo, sin
-// usar la función copy. Como make reserva un arreglo subyacente nuevo, la
-// copia y el original quedan en memorias distintas y modificar uno no afecta
-// al otro. En cambio, other := original no copia los elementos. Un slice
-// guarda una referencia a su arreglo subyacente junto con su longitud y su
-// capacidad, así que esa asignación solo copia la referencia y ambos slices
-// terminan apuntando a los mismos datos. Por eso un cambio hecho con other
-// también se ve en original. En Go no se llama a free, porque el recolector
-// de basura recupera la memoria cuando el slice deja de ser alcanzable.
+// La función copyArray crea un slice nuevo con make y copia los elementos
+// con un ciclo, sin usar copy. Como make reserva memoria nueva, cambiar la
+// copia no afecta al original. En cambio, other := original solo copia la
+// referencia al arreglo subyacente, así que ambos comparten los mismos datos.
+// En Go no se llama a free porque el recolector libera la memoria.
 
 // copyArray devuelve un slice nuevo con los mismos elementos de values.
 func copyArray(values []int) []int {
@@ -158,15 +144,11 @@ func testCopy() {
 
 // Ejercicio 4: Ordenar una copia
 //
-// Se desarrolla la función sortAscending, que ordena un slice de menor a
-// mayor usando el algoritmo de inserción, sin usar sort ni slices.Sort. El
-// algoritmo recorre el slice desde la segunda posición, guarda el elemento
-// actual en una variable local y desplaza hacia la derecha los elementos
-// anteriores que sean mayores, hasta encontrar el lugar donde insertarlo. La
-// función no devuelve nada porque el descriptor del slice se pasa por valor,
-// pero sus elementos pertenecen al arreglo subyacente compartido, así que los
-// cambios se ven en el slice del llamador. Por eso se ordena una copia hecha
-// con copyArray del ejercicio 3, para conservar la entrada original.
+// La función sortAscending ordena de menor a mayor con inserción, sin usar
+// sort ni slices.Sort. Cada elemento se inserta en su lugar desplazando a la
+// derecha los mayores que tiene antes. No devuelve nada porque modifica el
+// arreglo subyacente que comparte con el llamador, por eso se ordena una
+// copia hecha con copyArray y la entrada se conserva.
 
 // sortAscending ordena values de menor a mayor mediante inserción.
 func sortAscending(values []int) {
@@ -195,18 +177,12 @@ func testSort() {
 
 // Ejercicio 5: Dos valores que suman un objetivo
 //
-// Se desarrolla la función findPair, que busca en un slice ordenado de forma
-// ascendente dos posiciones distintas cuyos valores sumen el objetivo. Usa
-// dos índices, left en el inicio y right en el final, y en cada paso compara
-// la suma de ambos con el objetivo. Si la suma es menor, se puede descartar
-// el extremo izquierdo, porque al sumarlo con el mayor valor disponible ya no
-// alcanza el objetivo y con cualquier otro valor la suma sería aún menor, así
-// que left avanza. Si la suma es mayor, se descarta el extremo derecho por la
-// razón contraria, porque ni con el menor valor disponible baja lo suficiente,
-// así que right retrocede. El ciclo termina cuando encuentra el par o cuando
-// los índices se cruzan, lo que da un recorrido O(n). La entrada no se
-// modifica, solo se leen sus elementos, y si tiene menos de dos elementos el
-// ciclo no se ejecuta y la función devuelve false.
+// La función findPair busca en un slice ordenado dos posiciones que sumen el
+// objetivo, con un índice en cada extremo. Si la suma es menor, el extremo
+// izquierdo se descarta porque ni con el mayor valor alcanza, y left avanza.
+// Si es mayor, el derecho se descarta porque ni con el menor baja, y right
+// retrocede. Es O(n), no modifica la entrada y con menos de dos elementos
+// devuelve false.
 
 // findPair imprime un par de values que suma target y devuelve si existe.
 func findPair(values []int, target int) bool {
@@ -248,21 +224,13 @@ func testFindPair() {
 
 // Ejercicio 6: 3Sum
 //
-// Se desarrolla la función threeSum, que imprime todas las ternas únicas de
-// posiciones distintas cuya suma es cero y devuelve cuántas encontró. Si la
-// entrada tiene menos de tres elementos devuelve cero. Para conservar la
-// entrada se crea una copia con copyArray y se ordena con sortAscending. Luego
-// se fija cada elemento sorted[i] como primer valor de la terna y se buscan
-// los otros dos con la técnica de dos índices del ejercicio 5, con left
-// después de i y right al final, buscando que sumen -sorted[i]. Al encontrar
-// una terna no se detiene la búsqueda, porque con el mismo primer elemento
-// puede haber otras ternas, así que mueve ambos índices y sigue. Las ternas
-// duplicadas se evitan gracias al orden, ya que los valores iguales quedan
-// juntos. Si sorted[i] es igual al anterior se salta, porque ese primer valor
-// ya se procesó, y después de cada terna encontrada se saltan los valores
-// repetidos en left y en right. El ciclo externo recorre n elementos y la
-// búsqueda interna es O(n), así que la búsqueda posterior al ordenamiento es
-// O(n²).
+// La función threeSum imprime las ternas únicas que suman cero y devuelve su
+// cantidad, o cero si hay menos de tres elementos. Ordena una copia para
+// conservar la entrada, fija cada sorted[i] y busca los otros dos con dos
+// índices como en el ejercicio 5. Al encontrar una terna sigue buscando,
+// porque puede haber más con el mismo primer valor. Los duplicados se evitan
+// saltando los valores repetidos en i, left y right, que quedan juntos por el
+// orden. La búsqueda es O(n²).
 
 // threeSum imprime las ternas únicas que suman cero y devuelve su cantidad.
 func threeSum(values []int) int {
@@ -323,18 +291,11 @@ func testThreeSum() {
 
 // Ejercicio 7: Máximos desde ambos extremos
 //
-// Se desarrollan las funciones buildLeftMax y buildRightMax, que calculan
-// para cada posición la mayor altura vista desde cada extremo, incluyendo la
-// altura actual. Los slices de salida se crean antes con make, con la misma
-// longitud que height, y se pasan como parámetros. Las funciones no necesitan
-// devolverlos porque escriben en los elementos del arreglo subyacente que
-// comparten con el llamador. buildLeftMax recorre de izquierda a derecha, y
-// cada posición guarda el mayor entre la altura actual y el máximo de la
-// posición anterior. buildRightMax hace lo mismo de derecha a izquierda,
-// comparando con el máximo de la posición siguiente. Cada función hace un
-// único recorrido, así que ambas son O(n). La entrada no se modifica y no
-// puede estar vacía, porque cada recorrido empieza copiando la altura del
-// extremo.
+// Las funciones buildLeftMax y buildRightMax guardan en cada posición la
+// mayor altura vista desde cada extremo, incluyendo la actual. Los slices de
+// salida se crean antes con make y las funciones escriben en ellos, porque
+// comparten el arreglo subyacente con el llamador. Cada una compara la altura
+// actual con el máximo de la posición vecina y hace un solo recorrido O(n).
 
 // buildLeftMax llena leftMax con el máximo de height desde el inicio.
 func buildLeftMax(height []int, leftMax []int) {
@@ -378,22 +339,12 @@ func testMaxArrays() {
 
 // Ejercicio 8: Trapping Rain Water
 //
-// Se desarrolla la función trappedWater, que calcula cuánta agua queda
-// atrapada entre columnas de ancho uno. Crea leftMax y rightMax con make y
-// los llena con buildLeftMax y buildRightMax del ejercicio 7. En cada
-// posición, el agua depende del menor de los dos máximos porque el agua sube
-// hasta que se derrama por el lado más bajo. La pared más alta de la
-// izquierda y la más alta de la derecha forman un recipiente, y si el nivel
-// pasara la menor de las dos, el agua se escaparía por ese lado hacia el
-// extremo. Por eso el nivel en la posición es el menor de leftMax y rightMax,
-// y el agua sobre la columna es ese nivel menos la altura actual. Como ambos
-// máximos incluyen la altura actual, la resta nunca es negativa. El total se
-// acumula en int64 porque con hasta 20 000 columnas y alturas de hasta
-// 100 000 el resultado puede pasar el límite de un entero de 32 bits. La
-// entrada no se modifica, el tiempo es O(n) porque hay tres recorridos
-// separados y el espacio auxiliar es O(n) por los dos slices de máximos. La
-// función printWaterDetail usa el mismo cálculo para mostrar el detalle por
-// posición.
+// La función trappedWater calcula el agua atrapada entre las columnas usando
+// leftMax y rightMax del ejercicio 7. El agua de cada posición depende del
+// menor de los dos máximos porque, si subiera más, se derramaría por el lado
+// más bajo. Esa altura menos la columna actual da el agua de la posición. El
+// total se acumula en int64 porque puede pasar el límite de 32 bits. Usa
+// tiempo O(n), espacio auxiliar O(n) y no modifica la entrada.
 
 // waterAt devuelve el agua sobre la posición i a partir de los dos máximos.
 func waterAt(height []int, leftMax []int, rightMax []int, i int) int {
